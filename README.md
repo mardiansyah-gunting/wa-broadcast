@@ -51,14 +51,14 @@ This script reads a list of phone numbers from a text file and sends a predefine
    - `628123456789`
 
 2. **Message Content:**
-   Currently, the message is hardcoded in `main.py` under the `pesan_asli` variable. Update this variable with your desired message.
-   - **TODO:** Move the message to an external file (e.g., `pesan.txt`) or environment variable for easier configuration.
+   Edit `pesan.txt` and write your message there. The script will read this file and use its content as the broadcast message.
 
 ## 📂 Project Structure
 
 - `main.py`: The entry point and main automation script.
 - `requirements.txt`: Python package dependencies.
 - `nomor_kontak.txt`: Input file for phone numbers.
+- `pesan.txt`: File to store the message content to be broadcasted.
 - `PyWhatKit_DB.txt`: Internal database/log (if applicable).
 - `README.md`: This file.
 

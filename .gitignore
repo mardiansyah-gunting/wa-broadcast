@@ -29,10 +29,19 @@ ENV/
 # --- 3. PROJECT-SPECIFIC IGNORES (SENSITIVE DATA & LOGS) ---
 # Ignore the file containing contact numbers for privacy/security
 nomor_kontak.txt
+# Ignore message content for privacy
+pesan.txt
 # Ignore database/log file from pywhatkit or selenium
 PyWhatKit_DB.txt
 # General log files
 *.log
+
+# --- 4. LARGE FILES / STORAGE ---
+# Large files that might be generated or used
+*.zip
+*.tar.gz
+*.rar
+user_data/
 
 # --- 4. IDE-SPECIFIC IGNORES ---
 .idea/

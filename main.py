@@ -3,76 +3,70 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import urllib.parse
 import time
 import os
 
 # --- 1. MEMBACA FILE NOMOR ---
-nama_file = "nomor_kontak.txt"
+file_nomor = "nomor_kontak.txt"
+file_pesan = "pesan.txt"
 daftar_kontak = []
 
-if os.path.exists(nama_file):
-    with open(nama_file, "r") as file:
-        lines = file.readlines()
-        for line in lines:
-            nomor_bersih = line.strip()
-            if nomor_bersih:
-                # Pastikan format angka saja, buang + jika ada untuk diproses selenium nanti
-                # Tapi untuk URL whatsapp, format internasional tanpa '+' lebih aman kadang,
-                # namun format standar internasional (628xxx) paling aman.
-                if nomor_bersih.startswith("+"):
-                    nomor_final = nomor_bersih[1:]  # Buang tanda +
-                elif nomor_bersih.startswith("0"):
-                    nomor_final = "62" + nomor_bersih[1:]  # Ubah 08 jadi 628
-                else:
-                    nomor_final = nomor_bersih
-
-                daftar_kontak.append(nomor_final)
-    print(f"✅ Berhasil memuat {len(daftar_kontak)} nomor.")
-else:
-    print(f"❌ Error: File '{nama_file}' tidak ditemukan.")
+if not os.path.exists(file_nomor):
+    # Buat file contoh jika belum ada
+    with open(file_nomor, "w") as f:
+        f.write("# Masukkan nomor di sini, satu nomor per baris\n")
+        f.write("# Contoh: 08123456789 atau 628123456789\n")
+    print(f"📝 File '{file_nomor}' telah dibuat. Silakan isi daftar nomor kontak di sana.")
     exit()
 
-# --- 2. PESAN (Dikonversi agar aman di URL) ---
-pesan_asli = """Halo teman-teman dan rekan semua,
+with open(file_nomor, "r") as file:
+    lines = file.readlines()
+    for line in lines:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        
+        # Bersihkan nomor
+        if line.startswith("+"):
+            nomor_final = line[1:]
+        elif line.startswith("0"):
+            nomor_final = "62" + line[1:]
+        else:
+            nomor_final = line
+            
+        daftar_kontak.append(nomor_final)
 
-Saya ingin mengabarkan bahwa HP saya hilang/kecopetan minggu lalu.
+if not daftar_kontak:
+    print(f"⚠️ Tidak ada nomor kontak yang ditemukan di '{file_nomor}'.")
+    exit()
 
-Karena sebelumnya saya menggunakan fitur WhatsApp Cloning untuk nomor lama (+62 812-5008-8282) di HP tersebut, saat ini aksesnya sudah tidak saya pegang lagi. Demi keamanan, mohon abaikan dan blokir jika ada pesan dari nomor lama tersebut.
+print(f"✅ Berhasil memuat {len(daftar_kontak)} nomor.")
 
-Untuk komunikasi ke depannya, silakan hubungi saya melalui nomor ini saja. Mohon maaf atas ketidaknyamanan ini dan terima kasih!
+# --- 2. MEMBACA FILE PESAN ---
+if not os.path.exists(file_pesan):
+    with open(file_pesan, "w", encoding="utf-8") as f:
+        f.write("Halo! Ini adalah pesan otomatis dari WhatsApp Broadcast Tool.")
+    print(f"📝 File '{file_pesan}' telah dibuat dengan pesan default.")
 
----
+with open(file_pesan, "r", encoding="utf-8") as f:
+    pesan_asli = f.read()
 
-Hi everyone,
+if not pesan_asli.strip():
+    print(f"⚠️ Pesan di '{file_pesan}' kosong.")
+    exit()
 
-I’m writing to let you know that my phone was stolen last week.
-
-Since I was using a WhatsApp Cloning setup for my old number (+62 812-5008-8282) on that device, I no longer have secure access to it. For your safety, please ignore and block any messages coming from that old number.
-
-Please use this current number for all future communication. Apologies for the inconvenience and thank you!
-
----
-
-大家好，
-
-想告知大家，我的手机在上周不幸遗失/被盗。
-
-由于我之前在该手机上使用了旧号码 (+62 812-5008-8282) 的WhatsApp克隆/分身功能，为了安全起见，该旧号码已停止使用。
-
-若收到该旧号码发来的任何信息，请直接忽略并拉黑。今后请通过这个新号码联系我。造成不便，敬请见谅。谢谢大家！"""
-
-# Encode pesan agar bisa masuk ke URL (mengubah spasi jadi %20, enter jadi %0A, dll)
+# Encode pesan agar bisa masuk ke URL
 pesan_encoded = urllib.parse.quote(pesan_asli)
 
 # --- 3. SETUP BROWSER (SELENIUM) ---
 print("⚙️ Membuka Browser...")
 options = webdriver.ChromeOptions()
-# options.add_argument("--headless") # Jangan nyalakan ini karena kita perlu scan QR
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+# Optional: simpan session agar tidak perlu scan QR setiap kali (butuh path profile)
+# options.add_argument("--user-data-dir=./user_data") 
 
 # Inisialisasi Driver
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -90,26 +84,21 @@ for nomor in daftar_kontak:
     try:
         print(f"🔄 Memproses ke: {nomor}")
 
-        # Buka chat spesifik di tab yang SAMA
+        # Buka chat spesifik
         url = f"https://web.whatsapp.com/send?phone={nomor}&text={pesan_encoded}"
         driver.get(url)
 
-        # Tunggu sampai tombol kirim muncul (maksimal 20 detik)
-        # Kita cari tombol dengan icon 'send' atau tombol enter
         try:
-            # Cara 1: Tunggu tombol send (ikon pesawat kertas) bisa diklik
+            # Tunggu tombol send (ikon pesawat kertas) bisa diklik
             send_button = wait.until(EC.element_to_be_clickable((By.XPATH, '//span[@data-icon="send"]')))
-            time.sleep(1)  # Jeda dikit biar natural
+            time.sleep(1)  # Jeda natural
             send_button.click()
 
             print(f"✅ Terkirim ke {nomor}")
-
-            # Jeda antar pesan (PENTING: Jangan terlalu cepat atau WA akan memblokir sementara)
-            time.sleep(6)
+            time.sleep(6)  # Jeda anti-ban
 
         except Exception as e:
-            # Jika tombol send tidak muncul, mungkin nomor salah atau internet lemot
-            print(f"⚠️ Gagal menemukan tombol kirim untuk {nomor}. Mungkin nomor tidak terdaftar WA? Error: {e}")
+            print(f"⚠️ Gagal mengirim ke {nomor}. Mungkin nomor tidak terdaftar atau koneksi lambat.")
             time.sleep(2)
 
     except Exception as e:
