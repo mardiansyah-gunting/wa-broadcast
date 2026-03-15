@@ -1,2 +1,6 @@
-selenium>=4.0.0
-webdriver-manager>=4.0.0
+# WA Broadcast — Python dependencies
+# Install: pip install -r requirements.txt
+
+selenium>=4.0.0,<5.0.0
+webdriver-manager>=4.0.0,<5.0.0
+python-dotenv>=1.0.0,<2.0.0

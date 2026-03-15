@@ -1,93 +1,95 @@
 # WhatsApp Broadcast Tool
 
-A simple Python-based automation tool to send messages to multiple WhatsApp contacts using Selenium and WhatsApp Web.
+A Python automation tool to send messages to multiple contacts via the web client. Uses Selenium and a browser; one-time QR scan for authentication.
 
-## 📝 Overview
+## Stack
 
-This script reads a list of phone numbers from a text file and sends a predefined message to each number through WhatsApp Web. It uses Selenium to automate the browser, requiring a one-time QR code scan for authentication.
+- **Language:** Python 3.7+
+- **Automation:** Selenium
+- **Driver:** `webdriver-manager` (ChromeDriver)
+- **Target:** Web client (configure via environment)
 
-## 🛠️ Stack
+## Requirements
 
-- **Language:** Python 3.x
-- **Automation Framework:** Selenium
-- **Browser Driver:** `webdriver-manager` (automatically handles ChromeDriver)
-- **Target Platform:** WhatsApp Web (`web.whatsapp.com`)
+- Python 3.7+
+- Google Chrome
+- Stable internet connection
 
-## 📋 Requirements
+## Setup
 
-- **Python 3.7+**
-- **Google Chrome** installed on your machine.
-- Stable internet connection.
-
-## 🚀 Setup & Installation
-
-1. **Clone the repository:**
+1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone <your-repo>
    cd wa-broadcast
    ```
 
-2. **(Optional) Create and activate a virtual environment:**
+2. **(Optional) Virtual environment**
    ```bash
    python -m venv venv
-   # On macOS/Linux:
-   source venv/bin/activate
-   # On Windows:
-   venv\Scripts\activate
+   source venv/bin/activate   # macOS/Linux
+   venv\Scripts\activate      # Windows
    ```
 
-3. **Install dependencies:**
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-## ⚙️ Configuration
+4. **Configuration**
+   - Copy `.env.example` to `.env`.
+   - Set the required variable in `.env` (see that file). Do not commit `.env` or any tokens/keys.
 
-1. **Contact List:**
-   Prepare your contacts in `nomor_kontak.txt`. Each number should be on a new line.
-   Supported formats:
-   - `08123456789` (automatically converted to international format `628...`)
+## Configuration
+
+1. **Contact list**  
+   Use `nomor_kontak.txt`. One number per line. Formats supported:
+   - `08123456789` (converted to international)
    - `+628123456789`
    - `628123456789`
 
-2. **Message Content:**
-   Edit `pesan.txt` and write your message there. The script will read this file and use its content as the broadcast message.
+2. **Message**  
+   Put the broadcast text in `pesan.txt`. The script reads this file.
 
-## 📂 Project Structure
+## Project layout
 
-- `main.py`: The entry point and main automation script.
-- `requirements.txt`: Python package dependencies.
-- `nomor_kontak.txt`: Input file for phone numbers.
-- `pesan.txt`: File to store the message content to be broadcasted.
-- `PyWhatKit_DB.txt`: Internal database/log (if applicable).
-- `README.md`: This file.
+- `main.py` — Entry point and automation script
+- `requirements.txt` — Python dependencies
+- `nomor_kontak.txt` — Contact numbers (create locally, gitignored)
+- `pesan.txt` — Message body (create locally, gitignored)
+- `README.md` — This file
 
-## ▶️ Usage
+## Usage
 
-1. **Run the script:**
+1. **Run**
    ```bash
    python main.py
    ```
 
-2. **Authentication:**
-   A Chrome window will open. **Scan the QR code** using your phone's WhatsApp.
+2. **Auth**  
+   When the browser opens, complete the one-time QR step in the client.
 
-3. **Confirmation:**
-   Once the WhatsApp Web chat list appears, go back to your terminal/IDE and **press Enter** to start the broadcast.
+3. **Start**  
+   When the chat list is visible, go back to the terminal and press Enter to begin sending.
 
-4. **Execution:**
-   The script will navigate to each contact's chat and send the message with a built-in delay (approx. 6 seconds) to prevent account flagging.
+4. **Sending**  
+   The script opens each contact and sends the message with a delay between sends to reduce risk of restrictions.
 
-## ⚠️ Important Notes (Anti-Ban)
+## Important (anti-ban)
 
-- **Do not send too many messages too quickly.** The script has a built-in 6-second delay between messages.
-- Sending spam or unsolicited messages can lead to your WhatsApp account being **banned**. Use this tool responsibly for your own contacts.
-- **Manual Step:** The script requires you to manually press Enter in the terminal after scanning the QR code to ensure the session is ready.
+- Do not send too many messages too quickly. The script uses a delay between messages.
+- Sending spam or unsolicited messages can get an account restricted. Use only for your own contacts and lawful purposes.
+- You must complete the QR step and press Enter in the terminal before broadcasting starts.
 
-## 📜 License
+## Security
 
-This project is for educational purposes.
-- **TODO:** Specify a license (e.g., MIT, GPL).
+- Never commit `.env`, tokens, API keys, or credentials.
+- Keep `nomor_kontak.txt` and `pesan.txt` local; they are gitignored.
+- All sensitive configuration (e.g. base URL) is read from environment variables.
+
+## License
+
+This project is for educational use. Choose and add a license (e.g. MIT, GPL) as needed.
 
 ---
-*Disclaimer: This project is not affiliated with WhatsApp Inc.*
+
+*This project is not affiliated with WhatsApp Inc.*

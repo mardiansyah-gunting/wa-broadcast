@@ -1,4 +1,4 @@
-# --- 1. PYTHON-SPECIFIC IGNORES ---
+# --- Python ---
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,38 +20,83 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+*.manifest
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache/
+.pytest_cache/
+.coverage
+htmlcov/
 
-# --- 2. VIRTUAL ENVIRONMENT ---
+# --- Virtual environments ---
 venv/
 .venv/
 ENV/
+env.bak/
+.venv.bak/
 
-# --- 3. PROJECT-SPECIFIC IGNORES (SENSITIVE DATA & LOGS) ---
-# Ignore the file containing contact numbers for privacy/security
+# --- Secrets & configuration (never commit) ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+*credentials*
+*secret*
+config.local.*
+*.token
+
+# --- Project data (sensitive / user-specific) ---
 nomor_kontak.txt
-# Ignore message content for privacy
 pesan.txt
-# Ignore database/log file from pywhatkit or selenium
 PyWhatKit_DB.txt
-# General log files
-*.log
-
-# --- 4. LARGE FILES / STORAGE ---
-# Large files that might be generated or used
-*.zip
-*.tar.gz
-*.rar
 user_data/
 
-# --- 4. IDE-SPECIFIC IGNORES ---
+# --- Logs & temp ---
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+*.temp
+.cache/
+
+# --- Large / binary files ---
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.iso
+*.dmg
+*.exe
+*.msi
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.wmv
+*.flv
+*.webm
+*.mp3
+*.wav
+*.flac
+*.pdf
+*.psd
+*.sqlite
+*.sqlite3
+*.db
+chromedriver
+geckodriver
+drivers/
+
+# --- IDE & OS ---
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-*
 .DS_Store
-
-# --- 5. SELENIUM / WEBDRIVER-MANAGER ---
-# If drivers are downloaded locally (not in standard cache)
-drivers/
-chromedriver
-geckodriver
+Thumbs.db

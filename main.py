@@ -4,9 +4,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from webdriver_manager.chrome import ChromeDriverManager
+from dotenv import load_dotenv
 import urllib.parse
 import time
 import os
+
+load_dotenv()
+BASE_URL = os.getenv("WA_BASE_URL")
+if not BASE_URL or not BASE_URL.strip():
+    print("Set WA_BASE_URL in your .env file. See .env.example.")
+    exit(1)
+BASE_URL = BASE_URL.rstrip("/")
 
 # --- 1. MEMBACA FILE NOMOR ---
 file_nomor = "nomor_kontak.txt"
@@ -73,9 +81,9 @@ driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), opti
 wait = WebDriverWait(driver, 30)
 
 # Buka WA Web
-driver.get("https://web.whatsapp.com")
-print("⚠️ SILAKAN SCAN QR CODE WHATSAPP ANDA SEKARANG!")
-input("👉 Tekan tombol ENTER di sini jika sudah berhasil login dan chat terbuka...")
+driver.get(BASE_URL)
+print("Scan the QR code when prompted, then return here.")
+input("Press Enter here once you are logged in and the chat list is visible...")
 
 # --- 4. EKSEKUSI PENGIRIMAN ---
 print("🚀 Memulai pengiriman satu per satu...")
@@ -85,7 +93,7 @@ for nomor in daftar_kontak:
         print(f"🔄 Memproses ke: {nomor}")
 
         # Buka chat spesifik
-        url = f"https://web.whatsapp.com/send?phone={nomor}&text={pesan_encoded}"
+        url = f"{BASE_URL}/send?phone={nomor}&text={pesan_encoded}"
         driver.get(url)
 
         try:
